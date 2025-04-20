@@ -24,7 +24,7 @@ SomPalette::~SomPalette() {
   waitForThread(true);
 }
 
-void SomPalette::addInstanceData(SomInstanceDataT& instanceData) {
+void SomPalette::addInstanceData(SomInstanceDataT instanceData) {
   if (isIterating()) newInstanceData.send(instanceData);
 }
 
@@ -43,11 +43,13 @@ void SomPalette::threadedFunction() {
         p.setColor(i, j, col);
       }
     }
-    newPalettePixels.send(std::move(p));
+//    newPalettePixels.send(std::move(p));
+    newPalettePixels.send(p);
   }
 }
 
 void SomPalette::update() {
+  ofPixels pixels;
   isNewPalettePixelsReady = false;
   while (newPalettePixels.tryReceive(pixels)) {
     isNewPalettePixelsReady = true;

@@ -14,7 +14,7 @@ public:
   SomPalette(int width_, int height_, float initialLearningRate, int numIterations);
   ~SomPalette();
   bool isIterating() { return som.getCurrentIteration() < som.getNumIterations(); }
-  void addInstanceData(SomInstanceDataT& instanceData);
+  void addInstanceData(SomInstanceDataT instanceData);
   void update(); // move pixels into a GL texture on main thread
   bool keyPressed(int key);
   void draw();
@@ -30,7 +30,6 @@ private:
   ofThreadChannel<SomInstanceDataT> newInstanceData;
   ofThreadChannel<ofPixels> newPalettePixels;
   bool isNewPalettePixelsReady;
-  ofPixels pixels; // non-GL pixels for the palette
 
   ofTexture paletteTexture; // GL texture for the palette
 };
