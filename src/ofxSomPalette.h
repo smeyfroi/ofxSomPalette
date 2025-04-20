@@ -35,7 +35,7 @@ private:
   ofTexture paletteTexture; // GL texture for the palette
   
   // Fixed as an 8-color palette
-  std::vector<ofColor> palette;
+  std::array<ofColor, 8> palette;
   
   void updatePalette(const ofPixels& pixels);
 };

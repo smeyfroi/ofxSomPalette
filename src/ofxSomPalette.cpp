@@ -16,8 +16,6 @@ height { height_ }
 
   som.setup();
   
-  palette.resize(8);
-
   startThread();
 }
 
@@ -65,6 +63,11 @@ void SomPalette::updatePalette(const ofPixels& pixels) {
   palette[5] = pixels.getColor(0, pixels.getHeight()-1);
   palette[6] = pixels.getColor(pixels.getWidth()/2, pixels.getHeight()-1);
   palette[7] = pixels.getColor(pixels.getWidth()-1, pixels.getHeight()-1);
+  std::sort(palette.begin(),
+            palette.end(),
+            [](ofColor a, ofColor b){
+              return a.getLightness() < b.getLightness();
+            });
 }
 
 void SomPalette::update() {
