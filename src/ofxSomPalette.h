@@ -20,6 +20,7 @@ public:
   void draw();
   ofColor getColorAt(int x, int y) const;
   ofColor getColor(int i) { return palette[i]; }
+  bool isVisible = false;
 
 protected:
   void threadedFunction() override;

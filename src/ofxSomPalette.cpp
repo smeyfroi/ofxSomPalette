@@ -102,10 +102,16 @@ bool SomPalette::keyPressed(int key) {
     ofSaveImage(p, ofFilePath::getUserHomeDir()+"/Documents/som/"+timestamp+"-palette.png", OF_IMAGE_QUALITY_BEST);
     return true;
   }
+  if (key == 'C') {
+    isVisible = !isVisible;
+    return true;
+  }
   return false;
 }
 
 void SomPalette::draw() {
+  if (!isVisible) return;
+  
   ofPushStyle();
   if (paletteTexture.isAllocated()) {
     paletteTexture.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());

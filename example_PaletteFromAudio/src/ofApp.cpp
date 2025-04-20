@@ -54,6 +54,8 @@ void ofApp::setup() {
   audioAnalysisClientPtr = std::make_shared<ofxAudioAnalysisClient::LocalGistClient>();
   
   audioDataProcessorPtr = std::make_shared<ofxAudioData::Processor>(audioAnalysisClientPtr);
+  
+  somPalette.isVisible = true;
 }
 
 //--------------------------------------------------------------
