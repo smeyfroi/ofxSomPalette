@@ -19,6 +19,7 @@ public:
   bool keyPressed(int key);
   void draw();
   ofColor getColorAt(int x, int y) const;
+  ofColor getColor(int i) { return palette[i]; }
 
 protected:
   void threadedFunction() override;
@@ -32,4 +33,9 @@ private:
   bool isNewPalettePixelsReady;
 
   ofTexture paletteTexture; // GL texture for the palette
+  
+  // Fixed as an 8-color palette
+  std::vector<ofColor> palette;
+  
+  void updatePalette(const ofPixels& pixels);
 };

@@ -25,6 +25,5 @@ class ofApp: public ofBaseApp{
   std::shared_ptr<ofxAudioAnalysisClient::LocalGistClient> audioAnalysisClientPtr;
   std::shared_ptr<ofxAudioData::Processor> audioDataProcessorPtr;
   
-//  SomPalette somPalette { 128, 128, 0.015, 10000 };
-  SomPalette somPalette { 8, 8, 0.015, 10000 };
+  SomPalette somPalette { 16, 16, 0.01, 10000 };
 };

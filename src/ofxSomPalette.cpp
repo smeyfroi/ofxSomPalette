@@ -15,6 +15,8 @@ height { height_ }
   som.setMapSize(width, height); // can go to 3 dimensions
 
   som.setup();
+  
+  palette.resize(8);
 
   startThread();
 }
@@ -48,6 +50,23 @@ void SomPalette::threadedFunction() {
   }
 }
 
+// Sample 8 colors from the SOM pixels round the edges
+// X..X..X
+// .......
+// X.....X
+// .......
+// X..X..X
+void SomPalette::updatePalette(const ofPixels& pixels) {
+  palette[0] = pixels.getColor(0, 0);
+  palette[1] = pixels.getColor(pixels.getWidth()/2, 0);
+  palette[2] = pixels.getColor(pixels.getWidth()-1, 0);
+  palette[3] = pixels.getColor(0, pixels.getHeight()/2);
+  palette[4] = pixels.getColor(pixels.getWidth()-1, pixels.getHeight()/2);
+  palette[5] = pixels.getColor(0, pixels.getHeight()-1);
+  palette[6] = pixels.getColor(pixels.getWidth()/2, pixels.getHeight()-1);
+  palette[7] = pixels.getColor(pixels.getWidth()-1, pixels.getHeight()-1);
+}
+
 void SomPalette::update() {
   ofPixels pixels;
   isNewPalettePixelsReady = false;
@@ -57,23 +76,44 @@ void SomPalette::update() {
   if (isNewPalettePixelsReady) {
     if (!paletteTexture.isAllocated()) paletteTexture.allocate(pixels);
     paletteTexture.loadData(pixels);
+    updatePalette(pixels);
   }
 }
 
 bool SomPalette::keyPressed(int key) {
+  std::string timestamp = ofGetTimestampString();
   if (key == 'S' && paletteTexture.isAllocated()) {
     ofPixels p;
     paletteTexture.readToPixels(p);
-    ofSaveImage(p, ofFilePath::getUserHomeDir()+"/Documents/som/snapshot-"+ofGetTimestampString()+".png", OF_IMAGE_QUALITY_BEST);
+    ofSaveImage(p, ofFilePath::getUserHomeDir()+"/Documents/som/"+timestamp+"-snapshot.png", OF_IMAGE_QUALITY_BEST);
+    ofFbo fbo;
+    fbo.allocate(8 * 64, 64, GL_RGB8);
+    fbo.begin();
+    ofFill();
+    for (int i = 0; i < palette.size(); i++) {
+      ofSetColor(getColor(i));
+      ofDrawRectangle(i*64, 0.0, 64, 64);
+    }
+    fbo.end();
+    fbo.readToPixels(p);
+    ofSaveImage(p, ofFilePath::getUserHomeDir()+"/Documents/som/"+timestamp+"-palette.png", OF_IMAGE_QUALITY_BEST);
     return true;
   }
   return false;
 }
 
 void SomPalette::draw() {
+  ofPushStyle();
   if (paletteTexture.isAllocated()) {
     paletteTexture.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
   }
+  float chipWidth = ofGetWindowWidth() / palette.size();
+  ofFill();
+  for (int i = 0; i < palette.size(); i++) {
+    ofSetColor(getColor(i));
+    ofDrawRectangle(i*chipWidth, 0.0, chipWidth, chipWidth);
+  }
+  ofPopStyle();
 }
 
 ofColor SomPalette::getColorAt(int x, int y) const {

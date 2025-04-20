@@ -59,15 +59,17 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update(){
   audioDataProcessorPtr->update();
-  float u = audioDataProcessorPtr->getNormalisedScalarValue(ofxAudioAnalysisClient::AnalysisScalar::complexSpectralDifference, 0.0, 100.0);
+  float u = audioDataProcessorPtr->getNormalisedScalarValue(ofxAudioAnalysisClient::AnalysisScalar::complexSpectralDifference, 0.0, 80.0);
   float v = audioDataProcessorPtr->getNormalisedScalarValue(ofxAudioAnalysisClient::AnalysisScalar::spectralCrest, 0.0, 100.0);
   float w = audioDataProcessorPtr->getNormalisedScalarValue(ofxAudioAnalysisClient::AnalysisScalar::zeroCrossingRate, 0.0, 20.0);
  
   std::vector<ofxAudioData::ValiditySpec> sampleValiditySpecs {
-    {ofxAudioAnalysisClient::AnalysisScalar::rootMeanSquare, false, 0.01},
+    {ofxAudioAnalysisClient::AnalysisScalar::rootMeanSquare, false, 0.001},
     {ofxAudioAnalysisClient::AnalysisScalar::pitch, false, 50},
     {ofxAudioAnalysisClient::AnalysisScalar::pitch, true, 3000}
   };
+  
+//  ofLogNotice() << audioDataProcessorPtr->getScalarValue(ofxAudioAnalysisClient::AnalysisScalar::rootMeanSquare);
   
   if (! audioDataProcessorPtr->isDataValid(sampleValiditySpecs)) return;
   
