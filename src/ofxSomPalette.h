@@ -18,6 +18,7 @@ public:
   void update(); // move pixels into a GL texture on main thread
   bool keyPressed(int key);
   void draw();
+  ofColor getColorAt(int x, int y) const;
 
 protected:
   void threadedFunction() override;

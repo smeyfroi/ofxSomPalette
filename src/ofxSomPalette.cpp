@@ -74,3 +74,8 @@ void SomPalette::draw() {
   }
 }
 
+ofColor SomPalette::getColorAt(int x, int y) const {
+  ofPixels pixels;
+  paletteTexture.readToPixels(pixels);
+  return pixels.getColor(x, y);
+}
