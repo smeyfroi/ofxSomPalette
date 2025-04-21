@@ -2,26 +2,35 @@
 
 SomPalette::SomPalette(int width_, int height_, float initialLearningRate_, int numIterations_) :
 width { width_ },
-height { height_ }
+height { height_ },
+initialLearningRate { initialLearningRate_ },
+numIterations { numIterations_ }
 {
-  setThreadName("SomPalette");
-
-  som.setInitialLearningRate(initialLearningRate_);
-  som.setNumIterations(numIterations_);
-
-  double minInstance[3] = { 0, 0, 0 };
-  double maxInstance[3] = { 1.0, 1.0, 1.0 };
-  som.setFeaturesRange(3, minInstance, maxInstance);
-  som.setMapSize(width, height); // can go to 3 dimensions
-
-  som.setup();
-  
+  setThreadName("SomPalette " + ofToString(this));
+  setupSom(initialLearningRate_, numIterations_);
   startThread();
 }
 
 SomPalette::~SomPalette() {
   newInstanceData.close();
   waitForThread(true);
+}
+
+void SomPalette::setupSom(float initialLearningRate, int numIterations) {
+  double minInstance[3] = { 0, 0, 0 };
+  double maxInstance[3] = { 1.0, 1.0, 1.0 };
+  som.setFeaturesRange(3, minInstance, maxInstance);
+  som.setMapSize(width, height); // can go to 3 dimensions
+  
+  som.setInitialLearningRate(initialLearningRate);
+  som.setNumIterations(numIterations);
+  som.setup();
+}
+
+void SomPalette::reset() {
+  som = ofxSelfOrganizingMap();
+  setupSom(initialLearningRate, numIterations);
+  newInstanceData.clear();
 }
 
 void SomPalette::addInstanceData(SomInstanceDataT instanceData) {
@@ -103,14 +112,14 @@ bool SomPalette::keyPressed(int key) {
     return true;
   }
   if (key == 'C') {
-    isVisible = !isVisible;
+    setVisible(!isVisible());
     return true;
   }
   return false;
 }
 
-void SomPalette::draw() {
-  if (!isVisible) return;
+void SomPalette::draw(bool forceVisible) {
+  if (!forceVisible && !isVisible()) return;
   
   ofPushStyle();
   if (paletteTexture.isAllocated()) {
