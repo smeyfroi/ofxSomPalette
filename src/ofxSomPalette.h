@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxAudioAnalysisClient.h"
-#include "ofxAudioData.h"
 #include "ofxSelfOrganizingMap.h"
 
 // The doubles need to be normalised 0.0..1.0
