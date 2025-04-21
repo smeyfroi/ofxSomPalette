@@ -17,7 +17,7 @@ public:
   void addInstanceData(SomInstanceDataT instanceData);
   void update(); // move pixels into a GL texture on main thread
   bool keyPressed(int key);
-  void draw(bool forceVisible = false);
+  void draw(bool forceVisible = false, bool paletteOnly = false);
   ofColor getColorAt(int x, int y) const;
   ofColor getColor(int i) const { return palette[i]; }
   bool isVisible() const { return visible; };

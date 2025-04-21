@@ -24,13 +24,13 @@ void ContinuousSomPalette::update() {
   if (active->getCurrentIteration() >= active->getNumIterations()) {
     activeSomPalette = nextActiveSomPalette;
     nextActiveSomPalette = -1;
-    ofLogNotice() << "Switched to next palette";
+    ofLogNotice() << "Switched to next palette " << activeSomPalette;
   }
   // Else create next palette at 80% of iterations
   else if (nextActiveSomPalette == -1 && active->getCurrentIteration() > active->getNumIterations() * 0.6) {
     nextActiveSomPalette = (activeSomPalette + 1) % somPalettePtrs.size();
     somPalettePtrs[nextActiveSomPalette] = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations);
-    ofLogNotice() << "Created next palette";
+    ofLogNotice() << "Created next palette " << nextActiveSomPalette;
   }
   somPalettePtrs[activeSomPalette]->update();
   if (nextActiveSomPalette != -1) somPalettePtrs[nextActiveSomPalette]->update();
@@ -45,7 +45,12 @@ bool ContinuousSomPalette::keyPressed(int key) {
 }
 
 void ContinuousSomPalette::draw() {
-  somPalettePtrs[activeSomPalette]->draw(visible);
+  somPalettePtrs[activeSomPalette]->draw(visible, false);
+  ofPushMatrix();
+  ofTranslate(0.0, 140.0);
+  ofScale(1.0, 0.3);
+  if (nextActiveSomPalette != -1) somPalettePtrs[nextActiveSomPalette]->draw(visible, true);
+  ofPopMatrix();
 }
 
 ofColor ContinuousSomPalette::getColor(int i) const {

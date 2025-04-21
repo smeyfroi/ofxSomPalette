@@ -118,13 +118,17 @@ bool SomPalette::keyPressed(int key) {
   return false;
 }
 
-void SomPalette::draw(bool forceVisible) {
+void SomPalette::draw(bool forceVisible, bool paletteOnly) {
   if (!forceVisible && !isVisible()) return;
   
   ofPushStyle();
-  if (paletteTexture.isAllocated()) {
-    paletteTexture.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+  // full SOM texture
+  if (!paletteOnly) {
+    if (paletteTexture.isAllocated()) {
+      paletteTexture.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+    }
   }
+  // Discrete palette chips
   float chipWidth = ofGetWindowWidth() / palette.size();
   ofFill();
   for (int i = 0; i < palette.size(); i++) {
