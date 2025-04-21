@@ -55,7 +55,7 @@ void ofApp::setup() {
   
   audioDataProcessorPtr = std::make_shared<ofxAudioData::Processor>(audioAnalysisClientPtr);
   
-  somPalette.isVisible = true;
+  somPalette.setVisible(true);
 }
 
 //--------------------------------------------------------------

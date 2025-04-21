@@ -13,6 +13,7 @@ numIterations { numIterations_ }
 
 SomPalette::~SomPalette() {
   newInstanceData.close();
+  newPalettePixels.close();
   waitForThread(true);
 }
 
