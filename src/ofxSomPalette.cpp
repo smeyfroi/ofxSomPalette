@@ -133,7 +133,7 @@ void SomPalette::draw(bool forceVisible, bool paletteOnly) {
   ofFill();
   for (int i = 0; i < palette.size(); i++) {
     ofSetColor(getColor(i));
-    ofDrawRectangle(i*chipWidth, 0.0, chipWidth, chipWidth);
+    ofDrawRectangle(i*chipWidth, 0.0, chipWidth, 60.0);
   }
   ofPopStyle();
 }

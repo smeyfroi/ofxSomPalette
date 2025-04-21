@@ -47,8 +47,8 @@ bool ContinuousSomPalette::keyPressed(int key) {
 void ContinuousSomPalette::draw() {
   somPalettePtrs[activeSomPalette]->draw(visible, false);
   ofPushMatrix();
-  ofTranslate(0.0, 140.0);
-  ofScale(1.0, 0.3);
+  ofTranslate(0.0, 60.0);
+  ofScale(1.0, 0.5);
   if (nextActiveSomPalette != -1) somPalettePtrs[nextActiveSomPalette]->draw(visible, true);
   ofPopMatrix();
 }
