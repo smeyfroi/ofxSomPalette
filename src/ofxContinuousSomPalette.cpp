@@ -10,7 +10,7 @@ nextActiveSomPalette { -1 }
 {
   std::for_each(somPalettePtrs.begin(),
                 somPalettePtrs.end(),
-                [=](auto& p){ p = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations); });
+                [this](auto& p){ p = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations); });
 }
 
 void ContinuousSomPalette::addInstanceData(SomInstanceDataT instanceData) {
@@ -24,13 +24,13 @@ void ContinuousSomPalette::update() {
   if (active->getCurrentIteration() >= active->getNumIterations()) {
     activeSomPalette = nextActiveSomPalette;
     nextActiveSomPalette = -1;
-    ofLogNotice() << "Switched to next palette " << activeSomPalette;
+//    ofLogNotice() << "Switched to next palette " << activeSomPalette;
   }
   // Else create next palette at 80% of iterations
   else if (nextActiveSomPalette == -1 && active->getCurrentIteration() > active->getNumIterations() * 0.6) {
     nextActiveSomPalette = (activeSomPalette + 1) % somPalettePtrs.size();
     somPalettePtrs[nextActiveSomPalette] = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations);
-    ofLogNotice() << "Created next palette " << nextActiveSomPalette;
+//    ofLogNotice() << "Created next palette " << nextActiveSomPalette;
   }
   somPalettePtrs[activeSomPalette]->update();
   if (nextActiveSomPalette != -1) somPalettePtrs[nextActiveSomPalette]->update();

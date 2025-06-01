@@ -24,6 +24,7 @@ public:
   void setVisible(bool visible_) { visible = visible_; };
   int getCurrentIteration() { return som.getCurrentIteration(); };
   int getNumIterations() { return som.getNumIterations(); };
+  static constexpr size_t size = 8;
 
 protected:
   void threadedFunction() override;
@@ -42,7 +43,7 @@ private:
   ofTexture paletteTexture; // GL texture for the palette
   
   // Fixed as an 8-color palette
-  std::array<ofColor, 8> palette;
+  std::array<ofColor, size> palette;
   
   void updatePalette(const ofPixels& pixels);
   
