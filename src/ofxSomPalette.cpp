@@ -100,7 +100,7 @@ bool SomPalette::keyPressed(int key) {
     paletteTexture.readToPixels(p);
     ofSaveImage(p, ofFilePath::getUserHomeDir()+"/Documents/som/"+timestamp+"-snapshot.png", OF_IMAGE_QUALITY_BEST);
     ofFbo fbo;
-    fbo.allocate(8 * 64, 64, GL_RGB8);
+    fbo.allocate(8 * 64, 64, GL_RGB);
     fbo.begin();
     ofFill();
     for (int i = 0; i < palette.size(); i++) {
