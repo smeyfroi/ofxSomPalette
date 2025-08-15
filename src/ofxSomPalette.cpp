@@ -41,20 +41,22 @@ void SomPalette::addInstanceData(SomInstanceDataT instanceData) {
 // TODO: Make sure we can't be overwhelmed if producer fills queue faster than we consume (e.g. could just do the SOM not the pixels)
 void SomPalette::threadedFunction() {
   SomInstanceDataT instanceData;
-  ofPixels p;
-  p.allocate(width, height, OF_IMAGE_COLOR);
-
+  
   while (newInstanceData.receive(instanceData)) {
     som.updateMap(instanceData.data());
+    
+    ofPixels pixels;
+    pixels.allocate(width, height, OF_IMAGE_COLOR);
+    
     for (int i = 0; i < width; i++) {
       for (int j = 0; j < height; j++) {
         double* c = som.getMapAt(i, j);
         ofFloatColor col(c[0], c[1], c[2]);
-        p.setColor(i, j, col);
+        pixels.setColor(i, j, col);
       }
     }
-//    newPalettePixels.send(std::move(p));
-    newPalettePixels.send(p);
+    
+    newPalettePixels.send(std::move(pixels));
   }
 }
 
