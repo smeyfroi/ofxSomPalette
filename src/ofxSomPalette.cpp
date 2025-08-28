@@ -60,24 +60,23 @@ void SomPalette::threadedFunction() {
   }
 }
 
-// Sample 8 colors from the SOM pixels round the edges
+// Sample 8 colors from the SOM pixels round the edges within a margin
 // X..X..X
 // .......
 // X.....X
 // .......
 // X..X..X
 void SomPalette::updatePalette(const ofPixels& pixels) {
-  palette[0] = pixels.getColor(0, 0);
-  palette[1] = pixels.getColor(pixels.getWidth()/2, 0);
-  palette[2] = pixels.getColor(pixels.getWidth()-1, 0);
-  palette[3] = pixels.getColor(0, pixels.getHeight()/2);
-  palette[4] = pixels.getColor(pixels.getWidth()-1, pixels.getHeight()/2);
-  palette[5] = pixels.getColor(0, pixels.getHeight()-1);
-  palette[6] = pixels.getColor(pixels.getWidth()/2, pixels.getHeight()-1);
-  palette[7] = pixels.getColor(pixels.getWidth()-1, pixels.getHeight()-1);
-  std::sort(palette.begin(),
-            palette.end(),
-            [](ofColor a, ofColor b){
+  // fetch nine points within a margin of the edges
+  palette[0] = pixels.getColor(pixels.getWidth()/8, pixels.getHeight()/8);
+  palette[1] = pixels.getColor(pixels.getWidth()/2, pixels.getHeight()/8);
+  palette[2] = pixels.getColor(7*pixels.getWidth()/8, pixels.getHeight()/8);
+  palette[3] = pixels.getColor(pixels.getWidth()/8, pixels.getHeight()/2);
+  palette[4] = pixels.getColor(7*pixels.getWidth()/8, pixels.getHeight()/2);
+  palette[5] = pixels.getColor(pixels.getWidth()/8, 7*pixels.getHeight()/8);
+  palette[6] = pixels.getColor(pixels.getWidth()/2, 7*pixels.getHeight()/8);
+  palette[7] = pixels.getColor(7*pixels.getWidth()/8, 7*pixels.getHeight()/8);
+  std::sort(palette.begin(), palette.end(), [](ofColor a, ofColor b){
               return a.getLightness() < b.getLightness();
             });
 }
@@ -123,25 +122,29 @@ bool SomPalette::keyPressed(int key) {
 
 void SomPalette::draw(bool forceVisible, bool paletteOnly) {
   if (!forceVisible && !isVisible()) return;
-  
+
   ofPushStyle();
+  ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+  ofSetColor(255);
+  
   // full SOM texture
   if (!paletteOnly) {
     if (paletteTexture.isAllocated()) {
-      paletteTexture.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+      paletteTexture.draw(0, 0, 1.0, 1.0);
     }
   }
   // Discrete palette chips
-  float chipWidth = ofGetWindowWidth() / palette.size();
+  float chipWidth = 1.0 / palette.size();
   ofFill();
   for (int i = 0; i < palette.size(); i++) {
     ofSetColor(getColor(i));
-    ofDrawRectangle(i*chipWidth, 0.0, chipWidth, 60.0);
+    ofDrawRectangle(i*chipWidth, 0.0, chipWidth, chipWidth / 2.0);
   }
   ofPopStyle();
 }
 
 ofColor SomPalette::getColorAt(int x, int y) const {
+  if (!paletteTexture.isAllocated()) return ofColor::black;
   ofPixels pixels;
   paletteTexture.readToPixels(pixels);
   return pixels.getColor(x, y);

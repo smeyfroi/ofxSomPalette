@@ -18,22 +18,29 @@ void ContinuousSomPalette::addInstanceData(SomInstanceDataT instanceData) {
   if (nextActiveSomPalette != -1) somPalettePtrs[nextActiveSomPalette]->addInstanceData(instanceData);
 }
 
+void ContinuousSomPalette::switchPalette() {
+  if (nextActiveSomPalette == -1) return;
+  activeSomPalette = nextActiveSomPalette;
+  nextActiveSomPalette = -1;
+}
+
 void ContinuousSomPalette::update() {
   auto& active = somPalettePtrs[activeSomPalette];
-  // Swap active to next palette at end of iterations, reset nextActive
   if (active->getCurrentIteration() >= active->getNumIterations()) {
-    activeSomPalette = nextActiveSomPalette;
-    nextActiveSomPalette = -1;
-//    ofLogNotice() << "Switched to next palette " << activeSomPalette;
-  }
-  // Else create next palette at 80% of iterations
-  else if (nextActiveSomPalette == -1 && active->getCurrentIteration() > active->getNumIterations() * 0.6) {
+    switchPalette();
+  } else if (nextActiveSomPalette == -1 && active->getCurrentIteration() > active->getNumIterations() * startNextPaletteAt) {
     nextActiveSomPalette = (activeSomPalette + 1) % somPalettePtrs.size();
     somPalettePtrs[nextActiveSomPalette] = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations);
-//    ofLogNotice() << "Created next palette " << nextActiveSomPalette;
   }
   somPalettePtrs[activeSomPalette]->update();
   if (nextActiveSomPalette != -1) somPalettePtrs[nextActiveSomPalette]->update();
+}
+
+// Return true if the next palette is ready to be switched to (20% of iterations done)
+bool ContinuousSomPalette::nextPaletteIsReady() const {
+  if (nextActiveSomPalette == -1) return false;
+  auto& nextActive = somPalettePtrs[nextActiveSomPalette];
+  return (nextActive->getCurrentIteration() > nextActive->getNumIterations() * paletteReadyAt);
 }
 
 bool ContinuousSomPalette::keyPressed(int key) {
@@ -47,8 +54,7 @@ bool ContinuousSomPalette::keyPressed(int key) {
 void ContinuousSomPalette::draw() {
   somPalettePtrs[activeSomPalette]->draw(visible, false);
   ofPushMatrix();
-  ofTranslate(0.0, 60.0);
-  ofScale(1.0, 0.5);
+  ofTranslate(0.0, 1.0 / somPalettePtrs[activeSomPalette]->size * 0.5);
   if (nextActiveSomPalette != -1) somPalettePtrs[nextActiveSomPalette]->draw(visible, true);
   ofPopMatrix();
 }
