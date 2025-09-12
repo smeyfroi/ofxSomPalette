@@ -71,6 +71,6 @@ void ContinuousSomPalette::setVisible(bool visible_) {
   visible = visible_;
 }
 
-ofFloatPixels ContinuousSomPalette::getPixels() const {
-  return somPalettePtrs[activeSomPalette]->getPixels();
+const ofFloatPixels& ContinuousSomPalette::getPixelsRef() const {
+  return somPalettePtrs[activeSomPalette]->getPixelsRef();
 }

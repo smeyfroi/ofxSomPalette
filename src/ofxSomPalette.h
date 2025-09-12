@@ -18,7 +18,7 @@ public:
   void update(); // move pixels into a GL texture on main thread
   bool keyPressed(int key);
   void draw(bool forceVisible = false, bool paletteOnly = false);
-  ofFloatPixels getPixels() const { return pixels; }
+  const ofFloatPixels& getPixelsRef() const { return pixels; }
   ofColor getColorAt(int x, int y) const;
   ofColor getColor(int i) const { return palette[i]; }
   bool isVisible() const { return visible; };
