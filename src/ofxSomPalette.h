@@ -18,6 +18,7 @@ public:
   void update(); // move pixels into a GL texture on main thread
   bool keyPressed(int key);
   void draw(bool forceVisible = false, bool paletteOnly = false);
+  ofFloatPixels getPixels() const { return pixels; }
   ofColor getColorAt(int x, int y) const;
   ofColor getColor(int i) const { return palette[i]; }
   bool isVisible() const { return visible; };
@@ -37,15 +38,16 @@ private:
   ofxSelfOrganizingMap som;
 
   ofThreadChannel<SomInstanceDataT> newInstanceData;
-  ofThreadChannel<ofPixels> newPalettePixels;
+  ofThreadChannel<ofFloatPixels> newPalettePixels;
   bool isNewPalettePixelsReady;
 
+  ofFloatPixels pixels; // the pixels that are moved to the GL texture
   ofTexture paletteTexture; // GL texture for the palette
   
   // Fixed as an 8-color palette
   std::array<ofColor, size> palette;
   
-  void updatePalette(const ofPixels& pixels);
+  void updatePalette();
   
   bool visible = false;
 };

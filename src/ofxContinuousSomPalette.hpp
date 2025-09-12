@@ -16,6 +16,7 @@ public:
   ofColor getColor(int i) const;
   bool isVisible() const;
   void setVisible(bool visible_);
+  ofFloatPixels getPixels() const; // NOTE: returns a copy
 
   int width, height;
   float initialLearningRate;

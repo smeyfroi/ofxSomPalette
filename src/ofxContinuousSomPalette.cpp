@@ -70,3 +70,7 @@ bool ContinuousSomPalette::isVisible() const {
 void ContinuousSomPalette::setVisible(bool visible_) {
   visible = visible_;
 }
+
+ofFloatPixels ContinuousSomPalette::getPixels() const {
+  return somPalettePtrs[activeSomPalette]->getPixels();
+}

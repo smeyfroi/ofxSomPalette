@@ -45,7 +45,7 @@ void SomPalette::threadedFunction() {
   while (newInstanceData.receive(instanceData)) {
     som.updateMap(instanceData.data());
     
-    ofPixels pixels;
+    ofFloatPixels pixels;
     pixels.allocate(width, height, OF_IMAGE_COLOR);
     
     for (int i = 0; i < width; i++) {
@@ -66,7 +66,7 @@ void SomPalette::threadedFunction() {
 // X.....X
 // .......
 // X..X..X
-void SomPalette::updatePalette(const ofPixels& pixels) {
+void SomPalette::updatePalette() {
   // fetch nine points within a margin of the edges
   palette[0] = pixels.getColor(pixels.getWidth()/8, pixels.getHeight()/8);
   palette[1] = pixels.getColor(pixels.getWidth()/2, pixels.getHeight()/8);
@@ -82,7 +82,6 @@ void SomPalette::updatePalette(const ofPixels& pixels) {
 }
 
 void SomPalette::update() {
-  ofPixels pixels;
   isNewPalettePixelsReady = false;
   while (newPalettePixels.tryReceive(pixels)) {
     isNewPalettePixelsReady = true;
@@ -90,16 +89,14 @@ void SomPalette::update() {
   if (isNewPalettePixelsReady) {
     if (!paletteTexture.isAllocated()) paletteTexture.allocate(pixels);
     paletteTexture.loadData(pixels);
-    updatePalette(pixels);
+    updatePalette();
   }
 }
 
 bool SomPalette::keyPressed(int key) {
   std::string timestamp = ofGetTimestampString();
   if (key == 'S' && paletteTexture.isAllocated()) {
-    ofPixels p;
-    paletteTexture.readToPixels(p);
-    ofSaveImage(p, ofFilePath::getUserHomeDir()+"/Documents/som/"+timestamp+"-snapshot.png", OF_IMAGE_QUALITY_BEST);
+    ofSaveImage(pixels, ofFilePath::getUserHomeDir()+"/Documents/som/"+timestamp+"-snapshot.png", OF_IMAGE_QUALITY_BEST);
     ofFbo fbo;
     fbo.allocate(8 * 64, 64, GL_RGB);
     fbo.begin();
@@ -109,6 +106,7 @@ bool SomPalette::keyPressed(int key) {
       ofDrawRectangle(i*64, 0.0, 64, 64);
     }
     fbo.end();
+    ofPixels p;
     fbo.readToPixels(p);
     ofSaveImage(p, ofFilePath::getUserHomeDir()+"/Documents/som/"+timestamp+"-palette.png", OF_IMAGE_QUALITY_BEST);
     return true;
@@ -145,7 +143,5 @@ void SomPalette::draw(bool forceVisible, bool paletteOnly) {
 
 ofColor SomPalette::getColorAt(int x, int y) const {
   if (!paletteTexture.isAllocated()) return ofColor::black;
-  ofPixels pixels;
-  paletteTexture.readToPixels(pixels);
   return pixels.getColor(x, y);
 }
