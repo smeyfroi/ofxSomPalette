@@ -51,7 +51,7 @@ void ofApp::setup() {
 //  audioAnalysisClientPtr = std::make_shared<ofxAudioAnalysisClient::LocalGistClient>(rootSourceMaterialPath/"ioana-prokofiev.wav");
 //  audioAnalysisClientPtr = std::make_shared<ofxAudioAnalysisClient::LocalGistClient>(rootSourceMaterialPath/"Nightsong.wav");
 //  audioAnalysisClientPtr = std::make_shared<ofxAudioAnalysisClient::LocalGistClient>(rootSourceMaterialPath/"Treganna.wav");
-  audioAnalysisClientPtr = std::make_shared<ofxAudioAnalysisClient::LocalGistClient>();
+  audioAnalysisClientPtr = std::make_shared<ofxAudioAnalysisClient::LocalGistClient>(MIC_DEVICE_NAME, false, "");
   
   audioDataProcessorPtr = std::make_shared<ofxAudioData::Processor>(audioAnalysisClientPtr);
   
@@ -86,7 +86,10 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+  ofPushMatrix();
+  ofScale(ofGetWidth(), ofGetHeight());
   somPalette.draw();
+  ofPopMatrix();
 }
 
 //--------------------------------------------------------------

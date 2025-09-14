@@ -5,6 +5,8 @@
 #include "ofxAudioAnalysisClient.h"
 #include "ofxAudioData.h"
 
+const std::string MIC_DEVICE_NAME = "Apple Inc.: MacBook Pro Microphone";
+
 class ofApp: public ofBaseApp{
 public:
   void setup();

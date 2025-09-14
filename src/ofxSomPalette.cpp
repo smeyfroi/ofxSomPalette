@@ -1,4 +1,5 @@
 #include "ofxSomPalette.h"
+#include "ofTexture.h"
 
 SomPalette::SomPalette(int width_, int height_, float initialLearningRate_, int numIterations_) :
 width { width_ },
@@ -76,7 +77,8 @@ void SomPalette::updatePalette() {
   palette[5] = pixels.getColor(pixels.getWidth()/8, 7*pixels.getHeight()/8);
   palette[6] = pixels.getColor(pixels.getWidth()/2, 7*pixels.getHeight()/8);
   palette[7] = pixels.getColor(7*pixels.getWidth()/8, 7*pixels.getHeight()/8);
-  std::sort(palette.begin(), palette.end(), [](ofColor a, ofColor b){
+  std::sort(palette.begin(), palette.end(),
+            [](ofColor a, ofColor b){
               return a.getLightness() < b.getLightness();
             });
 }
@@ -87,7 +89,11 @@ void SomPalette::update() {
     isNewPalettePixelsReady = true;
   }
   if (isNewPalettePixelsReady) {
-    if (!paletteTexture.isAllocated()) paletteTexture.allocate(pixels);
+    if (!paletteTexture.isAllocated()) {
+      paletteTexture.allocate(pixels, false);
+      paletteTexture.setTextureMinMagFilter(GL_LINEAR, GL_LINEAR); // for interpolation when sampling
+      paletteTexture.setTextureWrap(GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT); // for wrapping when sampling
+    }
     paletteTexture.loadData(pixels);
     updatePalette();
   }
