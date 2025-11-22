@@ -19,6 +19,7 @@ void ContinuousSomPalette::addInstanceData(SomInstanceDataT instanceData) {
 }
 
 void ContinuousSomPalette::switchPalette() {
+  ofLogNotice() << "Switching SOM palette";
   if (nextActiveSomPalette == -1) return;
   activeSomPalette = nextActiveSomPalette;
   nextActiveSomPalette = -1;
@@ -26,7 +27,7 @@ void ContinuousSomPalette::switchPalette() {
 
 void ContinuousSomPalette::update() {
   auto& active = somPalettePtrs[activeSomPalette];
-  if (active->getCurrentIteration() >= active->getNumIterations()) {
+  if (nextActiveSomPalette != -1 && active->getCurrentIteration() >= active->getNumIterations()) {
     switchPalette();
   } else if (nextActiveSomPalette == -1 && active->getCurrentIteration() > active->getNumIterations() * startNextPaletteAt) {
     nextActiveSomPalette = (activeSomPalette + 1) % somPalettePtrs.size();
@@ -73,4 +74,22 @@ void ContinuousSomPalette::setVisible(bool visible_) {
 
 const ofFloatPixels& ContinuousSomPalette::getPixelsRef() const {
   return somPalettePtrs[activeSomPalette]->getPixelsRef();
+}
+
+const ofTexture* ContinuousSomPalette::getActiveTexturePtr() const {
+  return &somPalettePtrs[activeSomPalette]->getTexture();
+}
+
+const ofTexture* ContinuousSomPalette::getNextTexturePtr() const {
+  if (nextActiveSomPalette != -1) {
+    return &somPalettePtrs[nextActiveSomPalette]->getTexture();
+  }
+  return nullptr;
+}
+
+void ContinuousSomPalette::setNumIterations(int numIterations_) {
+  numIterations = numIterations_;
+  for (auto& sp : somPalettePtrs) {
+    sp->setNumIterations(numIterations_);
+  }
 }

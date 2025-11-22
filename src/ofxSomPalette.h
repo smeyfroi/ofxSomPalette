@@ -19,12 +19,14 @@ public:
   bool keyPressed(int key);
   void draw(bool forceVisible = false, bool paletteOnly = false);
   const ofFloatPixels& getPixelsRef() const { return pixels; }
+  const ofTexture& getTexture() const { return paletteTexture; }
   ofColor getColorAt(int x, int y) const;
   ofColor getColor(int i) const { return palette[i]; }
   bool isVisible() const { return visible; };
   void setVisible(bool visible_) { visible = visible_; };
   int getCurrentIteration() { return som.getCurrentIteration(); };
   int getNumIterations() { return som.getNumIterations(); };
+  void setNumIterations(int numIterations_) { som.setNumIterations(numIterations_); };
   static constexpr size_t size = 8;
 
 protected:

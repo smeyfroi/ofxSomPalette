@@ -101,7 +101,7 @@ void SomPalette::update() {
 
 bool SomPalette::keyPressed(int key) {
   std::string timestamp = ofGetTimestampString();
-  if (key == 'S' && paletteTexture.isAllocated()) {
+  if (key == 'U' && paletteTexture.isAllocated()) {
     ofSaveImage(pixels, ofFilePath::getUserHomeDir()+"/Documents/som/"+timestamp+"-snapshot.png", OF_IMAGE_QUALITY_BEST);
     ofFbo fbo;
     fbo.allocate(8 * 64, 64, GL_RGB);

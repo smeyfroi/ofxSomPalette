@@ -17,6 +17,9 @@ public:
   bool isVisible() const;
   void setVisible(bool visible_);
   const ofFloatPixels& getPixelsRef() const;
+  const ofTexture* getActiveTexturePtr() const;
+  const ofTexture* getNextTexturePtr() const;
+  void setNumIterations(int numIterations); // propogate to underlying somPalettes
 
   int width, height;
   float initialLearningRate;
