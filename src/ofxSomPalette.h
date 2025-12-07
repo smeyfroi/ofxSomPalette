@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "ofMain.h"
 #include "ofxSelfOrganizingMap.h"
 

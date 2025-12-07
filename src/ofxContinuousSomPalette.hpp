@@ -1,5 +1,8 @@
 #pragma once
 
+#include <array>
+#include <memory>
+
 #include "ofxSomPalette.h"
 
 // Maintains a number of palettes that renew over time
