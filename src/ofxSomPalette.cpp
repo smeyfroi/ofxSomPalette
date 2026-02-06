@@ -12,6 +12,16 @@ initialLearningRate { initialLearningRate_ },
 numIterations { numIterations_ }
 {
   setThreadName("SomPalette " + ofToString(this));
+
+  // Avoid bright startup flashes before any audio arrives.
+  palette.fill(ofColor::black);
+  pixels.allocate(width, height, OF_IMAGE_COLOR);
+  for (int x = 0; x < width; ++x) {
+    for (int y = 0; y < height; ++y) {
+      pixels.setColor(x, y, ofFloatColor(0.0f, 0.0f, 0.0f));
+    }
+  }
+
   setupSom(initialLearningRate_, numIterations_);
   startThread();
 }
@@ -38,6 +48,13 @@ void SomPalette::reset() {
   setupSom(initialLearningRate, numIterations);
   newInstanceData.clear();
   shouldWarmStartOnNextInstance = true;
+
+  palette.fill(ofColor::black);
+  for (int x = 0; x < width; ++x) {
+    for (int y = 0; y < height; ++y) {
+      pixels.setColor(x, y, ofFloatColor(0.0f, 0.0f, 0.0f));
+    }
+  }
 }
 
 void SomPalette::warmStartFromFirstInstance(float mix) {
