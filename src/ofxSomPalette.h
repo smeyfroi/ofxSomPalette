@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <atomic>
 
 #include "ofMain.h"
 #include "ofxSelfOrganizingMap.h"
@@ -15,10 +16,16 @@ public:
   ~SomPalette();
   void setupSom(float initialLearningRate, int numIterations);
   void reset();
+  void warmStartFromFirstInstance(float mix = 0.85f);
   bool isIterating() { return som.getCurrentIteration() < som.getNumIterations(); }
   void addInstanceData(SomInstanceDataT instanceData);
   void update(); // move pixels into a GL texture on main thread
   bool keyPressed(int key);
+
+  // Deterministic feature->RGB mapping controls.
+  // grayGain: centroid -> brightness contribution
+  // chromaGain: crest/zcr -> chroma contribution
+  void setColorizerGains(float grayGain, float chromaGain);
   void draw(bool forceVisible = false, bool paletteOnly = false);
   const ofFloatPixels& getPixelsRef() const { return pixels; }
   const ofTexture& getTexture() const { return paletteTexture; }
@@ -50,6 +57,11 @@ private:
   
   // Fixed as an 8-color palette
   std::array<ofColor, size> palette;
+
+  std::atomic<float> colorizerGrayGain { 1.0f };
+  std::atomic<float> colorizerChromaGain { 1.25f };
+  std::atomic<float> warmStartMix { 0.60f };
+  bool shouldWarmStartOnNextInstance { true };
   
   void updatePalette();
   
