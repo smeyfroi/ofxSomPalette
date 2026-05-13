@@ -41,6 +41,9 @@ public:
   void setWindowFrames(int windowFrames);
 
   void setColorizerGains(float grayGain, float chromaGain);
+  void setColorizerMaxBrightness(float maxBrightness);
+  void setChipSaturationBias(float bias);
+  void setTextureSmoothingSecs(float secs);
 
   int width, height;
   float initialLearningRate;
@@ -66,6 +69,9 @@ private:
 
   float colorizerGrayGain { 1.0f };
   float colorizerChromaGain { 1.25f };
+  float colorizerMaxBrightness { 1.0f };
+  float chipSaturationBias { 0.0f };
+  float textureSmoothingSecs { 0.0f };
 
   void performHop();
   float getBlendAlpha() const;

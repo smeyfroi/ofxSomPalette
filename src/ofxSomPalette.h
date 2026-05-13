@@ -7,7 +7,12 @@
 #include "ofxSelfOrganizingMap.h"
 
 // The doubles need to be normalised 0.0..1.0
-using SomInstanceDataT = std::array<double, 3>;
+// Feature layout (per Scheme A colorizer):
+//   [0] = centroid  -> hue chroma u axis
+//   [1] = crest     -> chroma magnitude (saturation gain)
+//   [2] = flatness  -> hue chroma v axis (inverted)
+//   [3] = rms       -> lightness
+using SomInstanceDataT = std::array<double, 4>;
 
 class SomPalette: public ofThread {
 
@@ -23,9 +28,21 @@ public:
   bool keyPressed(int key);
 
   // Deterministic feature->RGB mapping controls.
-  // grayGain: centroid -> brightness contribution
-  // chromaGain: crest/zcr -> chroma contribution
+  // grayGain: lightness contribution per Scheme A (rms drives lightness)
+  // chromaGain: chroma magnitude scale per Scheme A (crest drives saturation gain)
   void setColorizerGains(float grayGain, float chromaGain);
+
+  // Per-channel max for the colorizer output. Useful when downstream layers
+  // accumulate and would otherwise saturate to white. Default 1.0 (no cap).
+  void setColorizerMaxBrightness(float maxBrightness);
+
+  // Chroma reward in the greedy 8-chip extraction. The score for each candidate cell becomes
+  // `minRgbDistance + bias * (max(r,g,b) - min(r,g,b))`. Default 0.0 = old behaviour.
+  void setChipSaturationBias(float bias);
+
+  // Per-pixel temporal smoothing applied on the main thread each update(). 0 = no smoothing
+  // (snap to latest colorization), larger values mean the texture eases toward new state.
+  void setTextureSmoothingSecs(float secs);
   void draw(bool forceVisible = false, bool paletteOnly = false);
   const ofFloatPixels& getPixelsRef() const { return pixels; }
   const ofTexture& getTexture() const { return paletteTexture; }
@@ -60,6 +77,9 @@ private:
 
   std::atomic<float> colorizerGrayGain { 1.0f };
   std::atomic<float> colorizerChromaGain { 1.25f };
+  std::atomic<float> colorizerMaxBrightness { 1.0f };
+  std::atomic<float> chipSaturationBias { 0.0f };
+  std::atomic<float> textureSmoothingSecs { 0.0f };
   std::atomic<float> warmStartMix { 0.60f };
   bool shouldWarmStartOnNextInstance { true };
   

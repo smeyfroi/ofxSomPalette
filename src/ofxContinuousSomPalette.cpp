@@ -13,6 +13,9 @@ ContinuousSomPalette::ContinuousSomPalette(int width_, int height_, float initia
   std::for_each(somPalettePtrs.begin(), somPalettePtrs.end(), [this](auto& p) {
     p = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations);
     p->setColorizerGains(colorizerGrayGain, colorizerChromaGain);
+    p->setColorizerMaxBrightness(colorizerMaxBrightness);
+    p->setChipSaturationBias(chipSaturationBias);
+    p->setTextureSmoothingSecs(textureSmoothingSecs);
   });
 
   blendedPixels.allocate(width, height, OF_IMAGE_COLOR);
@@ -110,6 +113,27 @@ void ContinuousSomPalette::setColorizerGains(float grayGain, float chromaGain) {
   }
 }
 
+void ContinuousSomPalette::setColorizerMaxBrightness(float maxBrightness) {
+  colorizerMaxBrightness = maxBrightness;
+  for (auto& sp : somPalettePtrs) {
+    sp->setColorizerMaxBrightness(colorizerMaxBrightness);
+  }
+}
+
+void ContinuousSomPalette::setChipSaturationBias(float bias) {
+  chipSaturationBias = bias;
+  for (auto& sp : somPalettePtrs) {
+    sp->setChipSaturationBias(chipSaturationBias);
+  }
+}
+
+void ContinuousSomPalette::setTextureSmoothingSecs(float secs) {
+  textureSmoothingSecs = secs;
+  for (auto& sp : somPalettePtrs) {
+    sp->setTextureSmoothingSecs(textureSmoothingSecs);
+  }
+}
+
 void ContinuousSomPalette::performHop() {
   lastHopFrameCount = frameCount;
 
@@ -118,6 +142,9 @@ void ContinuousSomPalette::performHop() {
 
   somPalettePtrs[blendToIndex] = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations);
   somPalettePtrs[blendToIndex]->setColorizerGains(colorizerGrayGain, colorizerChromaGain);
+  somPalettePtrs[blendToIndex]->setColorizerMaxBrightness(colorizerMaxBrightness);
+  somPalettePtrs[blendToIndex]->setChipSaturationBias(chipSaturationBias);
+  somPalettePtrs[blendToIndex]->setTextureSmoothingSecs(textureSmoothingSecs);
 
   blendedTexture.clear();
 }
