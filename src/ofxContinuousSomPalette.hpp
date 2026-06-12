@@ -42,6 +42,7 @@ public:
 
   void setColorizerGains(float grayGain, float chromaGain);
   void setColorizerMaxBrightness(float maxBrightness);
+  void setColorizerChromaLumaComp(float comp);
   void setChipSaturationBias(float bias);
   void setTextureSmoothingSecs(float secs);
 
@@ -69,6 +70,7 @@ private:
 
   float colorizerGrayGain { 1.0f };
   float colorizerChromaGain { 1.25f };
+  float colorizerChromaLumaComp { 0.0f };
   float colorizerMaxBrightness { 1.0f };
   float chipSaturationBias { 0.0f };
   float textureSmoothingSecs { 0.0f };

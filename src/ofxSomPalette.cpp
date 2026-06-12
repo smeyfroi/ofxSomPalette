@@ -75,6 +75,10 @@ void SomPalette::setColorizerMaxBrightness(float maxBrightness) {
   colorizerMaxBrightness.store(maxBrightness);
 }
 
+void SomPalette::setColorizerChromaLumaComp(float comp) {
+  colorizerChromaLumaComp.store(comp);
+}
+
 void SomPalette::setChipSaturationBias(float bias) {
   chipSaturationBias.store(bias);
 }
@@ -126,6 +130,7 @@ void SomPalette::threadedFunction() {
     
     const float grayGain = colorizerGrayGain.load();
     const float chromaGain = colorizerChromaGain.load();
+    const float chromaLumaCompAmount = colorizerChromaLumaComp.load();
     const float maxBrightness = colorizerMaxBrightness.load();
 
     // Scale the colorizer into the [0, maxBrightness] cube directly. Without this
@@ -164,10 +169,17 @@ void SomPalette::threadedFunction() {
         // 120-degree rotation basis (u,v) -> (r,g,b) with zero-sum chroma.
         // Some clipping still occurs at the joint extremes of lightness + chroma but is much
         // gentler than before; most cells stay inside the cube.
+        // Zero-sum is not zero-LUMA: this basis carries -0.181*u + 0.557*v of
+        // Rec.709 luma, so blue cells render darker than warm cells at equal
+        // rms. chromaLumaComp subtracts that (scaled) so hue can be made
+        // luma-neutral: dark = quiet, not blue.
+        const float chromaLuma = -0.1811f * u + 0.5568f * v;
+        const float lumaComp = chromaLumaCompAmount * chromaLuma;
+
         constexpr float SQRT3_OVER_2 = 0.8660254037844386f;
-        const float r = ofClamp(baseline + gray + u, 0.0f, maxBrightness);
-        const float g = ofClamp(baseline + gray - 0.5f * u + SQRT3_OVER_2 * v, 0.0f, maxBrightness);
-        const float b = ofClamp(baseline + gray - 0.5f * u - SQRT3_OVER_2 * v, 0.0f, maxBrightness);
+        const float r = ofClamp(baseline + gray + u - lumaComp, 0.0f, maxBrightness);
+        const float g = ofClamp(baseline + gray - 0.5f * u + SQRT3_OVER_2 * v - lumaComp, 0.0f, maxBrightness);
+        const float b = ofClamp(baseline + gray - 0.5f * u - SQRT3_OVER_2 * v - lumaComp, 0.0f, maxBrightness);
 
         ofFloatColor col(r, g, b);
         pixels.setColor(i, j, col);

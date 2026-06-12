@@ -36,6 +36,13 @@ public:
   // accumulate and would otherwise saturate to white. Default 1.0 (no cap).
   void setColorizerMaxBrightness(float maxBrightness);
 
+  // Chroma-luma compensation [0..1]. The Scheme A chroma basis is zero-sum,
+  // not zero-luma: green chroma brightens and blue chroma darkens, so at
+  // equal rms a blue cell renders darker than a warm one and the dark end of
+  // the palette is blue by construction. 1.0 subtracts the chroma vector's
+  // Rec.709 luma so hue is luma-neutral (dark = quiet, not blue). Default 0.
+  void setColorizerChromaLumaComp(float comp);
+
   // Chroma reward in the greedy 8-chip extraction. The score for each candidate cell becomes
   // `minRgbDistance + bias * (max(r,g,b) - min(r,g,b))`. Default 0.0 = old behaviour.
   void setChipSaturationBias(float bias);
@@ -77,6 +84,7 @@ private:
 
   std::atomic<float> colorizerGrayGain { 1.0f };
   std::atomic<float> colorizerChromaGain { 1.25f };
+  std::atomic<float> colorizerChromaLumaComp { 0.0f };
   std::atomic<float> colorizerMaxBrightness { 1.0f };
   std::atomic<float> chipSaturationBias { 0.0f };
   std::atomic<float> textureSmoothingSecs { 0.0f };

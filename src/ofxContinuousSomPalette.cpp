@@ -14,6 +14,7 @@ ContinuousSomPalette::ContinuousSomPalette(int width_, int height_, float initia
     p = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations);
     p->setColorizerGains(colorizerGrayGain, colorizerChromaGain);
     p->setColorizerMaxBrightness(colorizerMaxBrightness);
+    p->setColorizerChromaLumaComp(colorizerChromaLumaComp);
     p->setChipSaturationBias(chipSaturationBias);
     p->setTextureSmoothingSecs(textureSmoothingSecs);
   });
@@ -113,6 +114,13 @@ void ContinuousSomPalette::setColorizerGains(float grayGain, float chromaGain) {
   }
 }
 
+void ContinuousSomPalette::setColorizerChromaLumaComp(float comp) {
+  colorizerChromaLumaComp = comp;
+  for (auto& sp : somPalettePtrs) {
+    sp->setColorizerChromaLumaComp(colorizerChromaLumaComp);
+  }
+}
+
 void ContinuousSomPalette::setColorizerMaxBrightness(float maxBrightness) {
   colorizerMaxBrightness = maxBrightness;
   for (auto& sp : somPalettePtrs) {
@@ -143,6 +151,7 @@ void ContinuousSomPalette::performHop() {
   somPalettePtrs[blendToIndex] = std::make_unique<SomPalette>(width, height, initialLearningRate, numIterations);
   somPalettePtrs[blendToIndex]->setColorizerGains(colorizerGrayGain, colorizerChromaGain);
   somPalettePtrs[blendToIndex]->setColorizerMaxBrightness(colorizerMaxBrightness);
+  somPalettePtrs[blendToIndex]->setColorizerChromaLumaComp(colorizerChromaLumaComp);
   somPalettePtrs[blendToIndex]->setChipSaturationBias(chipSaturationBias);
   somPalettePtrs[blendToIndex]->setTextureSmoothingSecs(textureSmoothingSecs);
 
