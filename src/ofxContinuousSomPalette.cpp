@@ -1,6 +1,7 @@
 #include "ofxContinuousSomPalette.hpp"
 
 #include <algorithm>
+#include <limits>
 
 ContinuousSomPalette::ContinuousSomPalette(int width_, int height_, float initialLearningRate_, int numIterations_)
 : width { width_ }
@@ -65,8 +66,28 @@ void ContinuousSomPalette::draw() {
 }
 
 ofColor ContinuousSomPalette::getColor(int i) const {
+  // MATCHED-PAIR crossfade: lerp the outgoing chip toward its NEAREST chip in the incoming
+  // palette, not toward the same-index chip. Index pairing only matches lightness RANK — the
+  // hues are unrelated, and an RGB lerp between unrelated hues passes through GREY. Since the
+  // crossfade spans most of each palette's life, every chip consumer (including the persistent-
+  // chip tracker in SomPaletteMod) mostly saw MUD instead of either palette's actual colours —
+  // a principal cause of "the main palette ignores the interesting parts of the texture in
+  // favour of monochromacity". Nearest-matching keeps each chip's trajectory hue-coherent;
+  // two chips may share a target (colour continuity matters here, not chip identity).
   const float alpha = getBlendAlpha();
-  return somPalettePtrs[blendFromIndex]->getColor(i).getLerped(somPalettePtrs[blendToIndex]->getColor(i), alpha);
+  const ofColor from = somPalettePtrs[blendFromIndex]->getColor(i);
+  const auto& to = somPalettePtrs[blendToIndex];
+  int bestJ = i;
+  float bestD2 = std::numeric_limits<float>::max();
+  for (int j = 0; j < static_cast<int>(SomPalette::size); ++j) {
+    const ofColor c = to->getColor(j);
+    const float dr = static_cast<float>(from.r) - c.r;
+    const float dg = static_cast<float>(from.g) - c.g;
+    const float db = static_cast<float>(from.b) - c.b;
+    const float d2 = dr * dr + dg * dg + db * db;
+    if (d2 < bestD2) { bestD2 = d2; bestJ = j; }
+  }
+  return from.getLerped(to->getColor(bestJ), alpha);
 }
 
 bool ContinuousSomPalette::isVisible() const {
